@@ -1,45 +1,36 @@
 import ResumeCard from "~/components/ResumeCard";
-import { resumes } from "../../constants";
 import type { Route } from "./+types/home";
 import Navbar from "~/components/Navbar";
-import { usePuterStore } from "../lib/puter";
-import { Link, useNavigate } from "react-router";
-import {useEffect, useState} from "react";
+import { resumes } from "~/../constants";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
-    { title: "SkillMatch AI" },
-    { name: "description", content: "Smart Feedback for your dream job" },
+    { title: "Resumind" },
+    { name: "description", content: "Smart feedback for your dream job!" },
   ];
 }
 
-
-
-
 export default function Home() {
+  return (
+    <main className="bg-[url('/images/bg-main.png')] bg-cover min-h-screen pt-0">
+      <Navbar />
 
-    const {auth, kv} = usePuterStore();
-    const navigate = useNavigate();
+      <section className="main-section px-4 sm:px-10">
+        <div className="page-heading py-20">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-[#33334d] mb-4">
+            Track Your Applications & Resume Ratings
+          </h1>
+          <h2 className="text-lg sm:text-xl text-gray-500 font-medium tracking-tight">
+            Review your submissions and check AI-powered feedback.
+          </h2>
+        </div>
 
-    useEffect(() => {
-      if(!auth.isAuthenticated) navigate('/auth?next=/');}, [auth.isAuthenticated])
-
-  return <main className="bg-[url('public/images/bg-main.svg')] bg-cover">
-    <Navbar />
-    
-    <section className="main-section">
-      <div className="page-heading py-16">
-        <h1>Track your Applications & Resume Ratings</h1>
-        <h2>Review your submissions and check AI-powered feedback</h2>
-      </div>
-      {resumes.length>0 && (
-        <div className="resumes-section ">
+        <div className="resumes-section mt-8">
           {resumes.map((resume) => (
-            <ResumeCard key={resume.id} resume={resume}/>
+            <ResumeCard key={resume.id} resume={resume} />
           ))}
         </div>
-      )} 
-    </section>
-    
-  </main>;
+      </section>
+    </main>
+  );
 }

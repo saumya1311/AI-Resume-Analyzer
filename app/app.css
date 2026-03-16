@@ -21,17 +21,77 @@
 html,
 body {
   @apply bg-white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode global styles */
+.dark body {
+  @apply bg-gray-950 text-white;
+}
+
+.dark main {
+  background: linear-gradient(to bottom, #0f172a 60%, #1e1030);
+  min-height: 100vh;
+}
+
+.dark h1, .dark h2 {
+  @apply text-gray-100;
+}
+
+.dark label {
+  @apply text-gray-400;
+}
+
+.dark input, .dark textarea {
+  @apply bg-gray-800 text-white border-gray-700;
+  box-shadow: inset 0 0 12px 0 rgba(99, 102, 241, 0.15);
+}
+
+.dark .navbar {
+  @apply bg-gray-900;
+}
+
+.dark .resume-card {
+  @apply bg-gray-800 shadow-gray-900;
+}
+
+.dark .resume-card-header {
+  @apply text-gray-200;
+}
+
+.dark .resume-summary .category {
+  @apply bg-gray-700;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800;
+}
+
+.dark .bg-gray-50 {
+  @apply bg-gray-700;
+}
+
+.dark .text-gray-500 {
+  @apply text-gray-400;
+}
+
+.dark .border-gray-200 {
+  @apply border-gray-700;
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
 main {
   @apply min-h-screen pt-10;
 }
 h1 {
-  @apply max-sm:text-[3rem] text-6xl  text-gradient leading-tight xl:tracking-[-2px] font-semibold;
+  @apply max-sm:text-[2.5rem] text-5xl leading-tight font-extrabold tracking-tight text-[#1a1a2e];
 }
 
 h2 {
-  @apply max-sm:text-xl text-3xl text-dark-200;
+  @apply max-sm:text-lg text-xl text-gray-500 font-medium;
 }
 
 label {
@@ -77,21 +137,21 @@ form {
     @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white;
   }
   .main-section {
-    @apply flex flex-col items-center gap-8 pt-12 max-sm:mx-2 mx-15 pb-5;
+    @apply flex flex-col items-center gap-12 pt-20 max-sm:mx-4 mx-20 pb-10;
   }
   .page-heading {
-    @apply flex flex-col items-center gap-8 max-w-4xl text-center max-sm:gap-4;
+    @apply flex flex-col items-center gap-4 max-w-5xl text-center;
   }
   .resumes-section {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full max-w-[1400px] mx-auto;
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full max-w-[1400px] mx-auto;
   }
 
   .resume-card {
-    @apply flex flex-col gap-6 h-[560px] w-full bg-white rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300;  
+    @apply flex flex-col gap-6 h-[540px] w-full bg-white rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:shadow-[0_20px_50px_rgba(100,116,139,0.1)] hover:-translate-y-2 transition-all duration-500;  
   }
 
   .resume-card-header {
-    @apply flex flex-row gap-2 justify-between min-h-[110px] max-sm:flex-col items-center max-md:justify-center max-md:items-center;
+    @apply flex flex-row gap-4 justify-between items-start;
   }
 
   .feedback-section {

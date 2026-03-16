@@ -1,10 +1,10 @@
-import {Link, useNavigate, useParams} from "react-router";
-import {useEffect, useState} from "react";
-import {usePuterStore} from "~/lib/puter";
+import Navbar from "~/components/Navbar";
+import { Link, useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "~/lib/supabase";
 import Summary from "~/components/Summary";
 import ATS from "~/components/ATS";
 import Details from "~/components/Details";
-
 
 export const meta = () => ([
     { title: 'Resumind | Review ' },
@@ -12,7 +12,6 @@ export const meta = () => ([
 ])
 
 const resume = () => {
-    const { auth, isLoading, fs, kv } = usePuterStore();
     const { id } = useParams();
     const [imageUrl, setImageUrl] = useState('');
     const [resumeUrl, setResumeUrl] = useState('');
@@ -21,31 +20,32 @@ const resume = () => {
 
 
     useEffect(() => {
-        if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
-    }, [isLoading])
+        const checkAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) navigate(`/auth?next=/resume/${id}`);
+        };
+        checkAuth();
+    }, [id, navigate]);
 
     useEffect(() => {
         const loadResume = async () => {
-            const resume = await kv.get(`resume:${id}`);
+            if (!id) return;
 
-            if(!resume) return;
+            const { data, error } = await supabase
+                .from('resumes')
+                .select('*')
+                .eq('id', id)
+                .single();
 
-            const data = JSON.parse(resume);
+            if (error || !data) {
+                console.error("Failed to load resume", error);
+                return;
+            }
 
-            const resumeBlob = await fs.read(data.resumePath);
-            if(!resumeBlob) return;
-
-            const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
-            const resumeUrl = URL.createObjectURL(pdfBlob);
-            setResumeUrl(resumeUrl);
-
-            const imageBlob = await fs.read(data.imagePath);
-            if(!imageBlob) return;
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setImageUrl(imageUrl);
-
+            setResumeUrl(data.resumePath);
+            setImageUrl(data.imagePath);
             setFeedback(data.feedback);
-            console.log({resumeUrl, imageUrl, feedback: data.feedback });
+            console.log({ resumeUrl: data.resumePath, imageUrl: data.imagePath, feedback: data.feedback });
         }
 
         loadResume();
@@ -53,12 +53,7 @@ const resume = () => {
 
     return (
         <main className="!pt-0">
-            <nav className="resume-nav">
-                <Link to="/" className="back-button">
-                    <img src="/icons/back.svg" alt="logo" className="w-2.5 h-2.5" />
-                    <span className="text-gray-800 text-sm font-semibold">Back to Homepage</span>
-                </Link>
-            </nav>
+            <Navbar />
             <div className="flex flex-row w-full max-lg:flex-col-reverse">
                 <section className="feedback-section bg-[url('/images/bg-small.svg') bg-cover h-[100vh] sticky top-0 items-center justify-center">
                     {imageUrl && resumeUrl && (
@@ -78,9 +73,9 @@ const resume = () => {
                     {feedback ? (
                         <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
                             <Summary feedback={feedback} />
-                            <ATS 
-                                score={feedback.ATS?.score || 0} 
-                                suggestions={feedback.ATS?.tips || []} 
+                            <ATS
+                                score={feedback.ATS?.score || 0}
+                                suggestions={feedback.ATS?.tips || []}
                             />
                             <Details feedback={feedback} />
                         </div>

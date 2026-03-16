@@ -1,89 +1,116 @@
-import {type FormEvent, useState} from 'react'
+import { type FormEvent, useState, useEffect } from 'react'
 import Navbar from "~/components/Navbar";
 import FileUploader from "~/components/FileUploader";
-import {usePuterStore} from "~/lib/puter";
-import {useNavigate} from "react-router";
-import {convertPdfToImage} from "~/lib/pdf2img";
-import {generateUUID} from "~/lib/utils";
-import {prepareInstructions} from "../../constants";
+
+import { supabase } from "~/lib/supabase";
+import { useNavigate } from "react-router";
+import { convertPdfToImage } from "~/lib/pdf2img";
+import { generateUUID } from "~/lib/utils";
+import { prepareInstructions } from "../../constants";
 
 const Upload = () => {
-    const { auth, isLoading, fs, ai, kv } = usePuterStore();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('');
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) navigate('/auth?next=/upload');
+        };
+        checkAuth();
+    }, [navigate]);
     const [file, setFile] = useState<File | null>(null);
 
     const handleFileSelect = (file: File | null) => {
         setFile(file)
     }
 
-    const handleAnalyze = async ({ companyName, jobTitle, jobDescription, file }: { companyName: string, jobTitle: string, jobDescription: string, file: File  }) => {
+    const handleAnalyze = async ({ companyName, jobTitle, jobDescription, file }: { companyName: string, jobTitle: string, jobDescription: string, file: File }) => {
         setIsProcessing(true);
 
+        const uuid = generateUUID();
+
         setStatusText('Uploading the file...');
-        const uploadedFile = await fs.upload([file]);
-        if(!uploadedFile) return setStatusText('Error: Failed to upload file');
+        const { data: uploadFile, error: fileError } = await supabase.storage
+            .from('resumes')
+            .upload(`${uuid}/${file.name}`, file, { cacheControl: '3600', upsert: false });
+
+        if (fileError) return setStatusText(`Error: Failed to upload file - ${fileError.message}`);
+
+        const { data: { publicUrl: pdfUrl } } = supabase.storage.from('resumes').getPublicUrl(`${uuid}/${file.name}`);
 
         setStatusText('Converting to image...');
         const imageFile = await convertPdfToImage(file);
-        // if(!imageFile.file) return setStatusText('Error: Failed to convert PDF to image');
         if (!imageFile.file) {
             console.error(imageFile.error);
             return setStatusText(imageFile.error ?? "PDF conversion failed");
         }
 
         setStatusText('Uploading the image...');
-        const uploadedImage = await fs.upload([imageFile.file]);
-        if(!uploadedImage) return setStatusText('Error: Failed to upload image');
+        const { data: uploadImage, error: imgError } = await supabase.storage
+            .from('resumes')
+            .upload(`${uuid}/${imageFile.file.name}`, imageFile.file, { cacheControl: '3600', upsert: false });
 
-        setStatusText('Preparing data...');
-        const uuid = generateUUID();
-        const data = {
-            id: uuid,
-            resumePath: uploadedFile.path,
-            imagePath: uploadedImage.path,
-            companyName, jobTitle, jobDescription,
-            feedback: '',
+        if (imgError) return setStatusText(`Error: Failed to upload image - ${imgError.message}`);
+
+        const { data: { publicUrl: imageUrl } } = supabase.storage.from('resumes').getPublicUrl(`${uuid}/${imageFile.file.name}`);
+
+        setStatusText('Analyzing with AI...');
+
+        try {
+            const res = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jobTitle, jobDescription, pdfUrl })
+            });
+
+            if (!res.ok) throw new Error('Failed to analyze resume');
+            const result = await res.json();
+
+            if (result.error) throw new Error(result.error);
+
+            setStatusText('Saving data...');
+            const { data: { session } } = await supabase.auth.getSession();
+            const data = {
+                id: uuid,
+                user_id: session?.user.id,
+                resumePath: pdfUrl,
+                imagePath: imageUrl,
+                companyName,
+                jobTitle,
+                jobDescription,
+                feedback: result.feedback,
+            }
+
+            const { error: dbError } = await supabase.from('resumes').insert(data);
+            if (dbError) throw dbError;
+
+            setStatusText('Analysis complete, redirecting...');
+            navigate(`/resume/${uuid}`);
+        } catch (error: any) {
+            console.error(error);
+            setStatusText(`Error: ${error.message}`);
         }
-        await kv.set(`resume:${uuid}`, JSON.stringify(data));
-
-        setStatusText('Analyzing...');
-
-        const feedback = await ai.feedback(
-            uploadedFile.path,
-            prepareInstructions({ jobTitle, jobDescription })
-        )
-        if (!feedback) return setStatusText('Error: Failed to analyze resume');
-
-        const feedbackText = typeof feedback.message.content === 'string'
-            ? feedback.message.content
-            : feedback.message.content[0].text;
-
-        data.feedback = JSON.parse(feedbackText);
-        await kv.set(`resume:${uuid}`, JSON.stringify(data));
-        setStatusText('Analysis complete, redirecting...');
-        console.log(data);
-        navigate(`/resume/${uuid}`);
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget.closest('form');
-        if(!form) return;
+        if (!form) return;
         const formData = new FormData(form);
 
         const companyName = formData.get('company-name') as string;
         const jobTitle = formData.get('job-title') as string;
         const jobDescription = formData.get('job-description') as string;
 
-        if(!file) return;
+        if (!file) return;
 
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
 
     return (
-        <main className="bg-[url('/images/bg-main.svg')] bg-cover">
+        <main className="bg-[url('/images/bg-main.png')] bg-cover">
             <Navbar />
 
             <section className="main-section">
