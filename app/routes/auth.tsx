@@ -4,7 +4,7 @@ import { supabase } from "~/lib/supabase";
 import Navbar from "~/components/Navbar";
 
 export const meta = () => ([
-    { title: "SkillMatchAI | Auth" },
+    { title: "ApplyWise | Auth" },
     {name: "description", content: "Login or register to access your personalized dashboard and manage your resume analysis results."}
 ])
 
@@ -74,7 +74,7 @@ const Auth = () => {
     };
 
     return (
-        <main className="bg-[url('/images/bg-auth.svg')] bg-cover min-h-[100vh]">
+        <main className="bg-[#d9ecfe] min-h-[100vh]">
             <Navbar />
             <div className="flex items-center justify-center p-4 min-h-[90vh]">
                 <div className="gradient-border shadow-2xl w-full max-w-md bg-white rounded-3xl overflow-hidden p-[2px]">

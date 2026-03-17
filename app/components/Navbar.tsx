@@ -48,7 +48,7 @@ const Navbar = () => {
     <nav className="navbar relative">
       {/* Logo */}
       <Link to="/">
-        <p className="text-2xl font-bold text-gradient">SkillMatch AI</p>
+        <p className="text-2xl font-bold text-gradient">ApplyWise</p>
       </Link>
 
       {/* Right side actions */}
