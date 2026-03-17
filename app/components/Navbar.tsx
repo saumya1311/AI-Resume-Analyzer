@@ -48,7 +48,7 @@ const Navbar = () => {
     <nav className="navbar relative">
       {/* Logo */}
       <Link to="/">
-        <p className="text-2xl font-bold text-gradient">ApplyWise</p>
+        <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#a5b4fc] to-[#606beb]">ApplyWise</p>
       </Link>
 
       {/* Right side actions */}

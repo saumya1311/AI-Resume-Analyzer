@@ -1,6 +1,7 @@
 import { type FormEvent, useState, useEffect } from 'react'
 import Navbar from "~/components/Navbar";
 import FileUploader from "~/components/FileUploader";
+import Footer from "~/components/Footer";
 
 import { supabase } from "~/lib/supabase";
 import { useNavigate } from "react-router";
@@ -110,10 +111,10 @@ const Upload = () => {
     }
 
     return (
-        <main className="bg-[url('/images/bg-main.png')] bg-cover">
+        <main className="bg-[url('/images/bg-main.png')] bg-cover min-h-screen flex flex-col">
             <Navbar />
 
-            <section className="main-section">
+            <section className="main-section flex-grow">
                 <div className="page-heading py-16">
                     <h1>Smart feedback for your dream job</h1>
                     {isProcessing ? (
@@ -151,6 +152,7 @@ const Upload = () => {
                     )}
                 </div>
             </section>
+            <Footer />
         </main>
     )
 }

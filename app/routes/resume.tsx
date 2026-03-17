@@ -5,6 +5,7 @@ import { supabase } from "~/lib/supabase";
 import Summary from "~/components/Summary";
 import ATS from "~/components/ATS";
 import Details from "~/components/Details";
+import Footer from "~/components/Footer";
 
 export const meta = () => ([
     { title: 'ApplyWise | Review ' },
@@ -52,9 +53,9 @@ const resume = () => {
     }, [id]);
 
     return (
-        <main className="!pt-0">
+        <main className="!pt-0 flex flex-col min-h-screen">
             <Navbar />
-            <div className="flex flex-row w-full max-lg:flex-col-reverse">
+            <div className="flex flex-row w-full max-lg:flex-col-reverse flex-grow">
                 <section className="feedback-section bg-[#d9ecfe] h-[100vh] sticky top-0 items-center justify-center">
                     {imageUrl && resumeUrl && (
                         <div className="animate-in fade-in duration-1000 gradient-border max-sm:m-0 h-[90%] max-wxl:h-fit w-fit">
@@ -84,6 +85,7 @@ const resume = () => {
                     )}
                 </section>
             </div>
+            <Footer />
         </main>
     )
 }

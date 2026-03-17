@@ -6,8 +6,8 @@ const ResumeCard = ({ resume: { id, companyName, jobTitle, feedback, imagePath }
     <Link to={`/resume/${id}`} className="resume-card group">
       <div className="flex flex-row items-center justify-between w-full mb-4">
         <div className="flex flex-col">
-          <h3 className="text-3xl font-bold text-[#1a1a2e] tracking-tight">{companyName}</h3>
-          <p className="text-lg text-[#6b7280] font-medium">{jobTitle}</p>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{companyName}</h3>
+          <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">{jobTitle}</p>
         </div>
         <div className="flex-shrink-0">
           <ScoreCircle score={feedback.overallScore} />

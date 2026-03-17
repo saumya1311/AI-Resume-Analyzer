@@ -6,6 +6,8 @@ const ScoreCircle = ({ score = 75 }: { score: number }) => {
   const progress = score / 100;
   const strokeDashoffset = circumference * (1 - progress);
 
+  const currentColor = "#2f6b25"; // A darker green for readability against light green/blue
+
   return (
     <div className="relative w-[96px] h-[96px]">
       <svg
@@ -14,27 +16,32 @@ const ScoreCircle = ({ score = 75 }: { score: number }) => {
         viewBox="0 0 100 100"
         className="transform -rotate-90 drop-shadow-sm"
       >
+        <defs>
+          <linearGradient id="scoreGreenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            {/* Multi-stop gradient for 4 quarters */}
+            <stop offset="0%" stopColor="#69f558" />   {/* Quarter 4 (End) */}
+            <stop offset="33%" stopColor="#93ee88" />  {/* Quarter 3 */}
+            <stop offset="66%" stopColor="#bdf0b7" />  {/* Quarter 2 */}
+            <stop offset="100%" stopColor="#cdebc9" /> {/* Quarter 1 (Start) */}
+          </linearGradient>
+        </defs>
+        
         {/* Background circle */}
         <circle
           cx="50"
           cy="50"
           r={normalizedRadius}
-          stroke="#f3f4f6" // Lighter gray for background
+          stroke="#f3f4f6"
           strokeWidth={stroke}
           fill="transparent"
         />
-        {/* Partial circle with gradient */}
-        <defs>
-          <linearGradient id="scoreGrad" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="#9333ea" /> {/* Purple */}
-            <stop offset="100%" stopColor="#ec4899" /> {/* Pink */}
-          </linearGradient>
-        </defs>
+        
+        {/* Progress circle */}
         <circle
           cx="50"
           cy="50"
           r={normalizedRadius}
-          stroke="url(#scoreGrad)"
+          stroke="url(#scoreGreenGradient)"
           strokeWidth={stroke}
           fill="transparent"
           strokeDasharray={circumference}
@@ -46,7 +53,12 @@ const ScoreCircle = ({ score = 75 }: { score: number }) => {
 
       {/* Score text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-bold text-[14px] text-gray-700 tracking-tighter">{`${score}/100`}</span>
+        <span 
+          className="font-bold text-[14px] tracking-tighter transition-colors duration-500" 
+          style={{ color: currentColor }}
+        >
+          {`${score}/100`}
+        </span>
       </div>
     </div>
   );

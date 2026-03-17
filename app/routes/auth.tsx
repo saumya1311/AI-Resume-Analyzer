@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { supabase } from "~/lib/supabase";
 import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer";
 
 export const meta = () => ([
     { title: "ApplyWise | Auth" },
@@ -74,49 +75,49 @@ const Auth = () => {
     };
 
     return (
-        <main className="bg-[#d9ecfe] min-h-[100vh]">
+        <main className="bg-[#d9ecfe] min-h-screen flex flex-col">
             <Navbar />
-            <div className="flex items-center justify-center p-4 min-h-[90vh]">
+            <div className="flex-grow flex items-center justify-center p-4">
                 <div className="gradient-border shadow-2xl w-full max-w-md bg-white rounded-3xl overflow-hidden p-[2px]">
-                    <section className="flex flex-col gap-6 bg-white rounded-3xl p-8 sm:p-10 h-full w-full">
-                        <div className="flex flex-col items-center gap-2 text-center mb-4">
-                            <Link to="/" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors self-start mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <section className="flex flex-col gap-4 bg-white rounded-3xl p-6 sm:p-10 h-full w-full">
+                        <div className="flex flex-col items-center gap-1 text-center mb-2">
+                            <Link to="/" className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors self-start mb-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
                                 Back to Home
                             </Link>
-                            <h1 className="text-3xl font-bold text-gray-900">{isSignUp ? "Create Account" : "Welcome Back"}</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">{isSignUp ? "Create Account" : "Welcome Back"}</h1>
                             <h2 className="text-sm font-medium text-gray-500">
                                 {isSignUp ? "Sign up to track your resume apps" : "Log In to Continue Your Job Journey"}
                             </h2>
                         </div>
                         
                         {errorMsg && (
-                            <div className={`p-3 rounded-lg text-sm text-center ${errorMsg.includes('Check your email') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            <div className={`p-2.5 rounded-lg text-xs text-center ${errorMsg.includes('Check your email') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                 {errorMsg}
                             </div>
                         )}
 
-                        <form onSubmit={handleEmailAuth} className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Email</label>
+                        <form onSubmit={handleEmailAuth} className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-1 w-full">
+                                <label className="text-xs font-semibold text-gray-700">Email</label>
                                 <input 
                                     type="email" 
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-50 text-gray-900" 
+                                    className="px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-50 text-gray-900" 
                                     placeholder="you@example.com"
                                     required 
                                 />
                             </div>
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Password</label>
+                            <div className="flex flex-col gap-1 w-full">
+                                <label className="text-xs font-semibold text-gray-700">Password</label>
                                 <input 
                                     type="password" 
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-50 text-gray-900" 
+                                    className="px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-50 text-gray-900" 
                                     placeholder="••••••••"
                                     required 
                                 />
@@ -125,7 +126,7 @@ const Auth = () => {
                             <button 
                                 type="submit" 
                                 disabled={isLoading}
-                                className="mt-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-md active:scale-[0.98] transition-all disabled:opacity-70 flex justify-center items-center"
+                                className="mt-1 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-md active:scale-[0.98] transition-all disabled:opacity-70 flex justify-center items-center"
                             >
                                 {isLoading ? (
                                     <span className="animate-pulse">{isSignUp ? "Signing up..." : "Logging in..."}</span>
@@ -135,16 +136,16 @@ const Auth = () => {
                             </button>
                         </form>
 
-                        <div className="relative flex items-center py-2">
-                            <div className="flex-grow border-t border-gray-200"></div>
-                            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">OR</span>
-                            <div className="flex-grow border-t border-gray-200"></div>
+                        <div className="relative flex items-center py-1">
+                            <div className="flex-grow border-t border-gray-100"></div>
+                            <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium">OR</span>
+                            <div className="flex-grow border-t border-gray-100"></div>
                         </div>
 
                         <button 
                             onClick={handleGoogleLogin}
                             disabled={isLoading}
-                            className="w-full py-3 flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl font-semibold shadow-sm active:scale-[0.98] transition-all disabled:opacity-70"
+                            className="w-full py-2.5 flex items-center justify-center gap-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-white rounded-xl font-semibold shadow-sm active:scale-[0.98] transition-all disabled:opacity-70"
                         >
                             <svg className="h-5 w-5" viewBox="0 0 24 24">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -155,7 +156,7 @@ const Auth = () => {
                             Continue with Google
                         </button>
 
-                        <p className="text-center text-sm text-gray-600 mt-2">
+                        <p className="text-center text-xs text-gray-600 mt-1">
                             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
                             <button 
                                 type="button"
@@ -168,6 +169,7 @@ const Auth = () => {
                     </section>
                 </div>
             </div>
+            <Footer />
         </main>
     )
 }

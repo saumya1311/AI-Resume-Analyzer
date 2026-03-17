@@ -76,7 +76,7 @@ export default function Home() {
                 { text: "Resume Check." },
                 { 
                   text: "Stress Less.", 
-                  className: "font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500" 
+                  className: "font-black text-transparent bg-clip-text bg-gradient-to-r from-[#a5b4fc] to-[#606beb]" 
                 }
               ]}
             />
