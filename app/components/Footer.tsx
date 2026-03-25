@@ -13,7 +13,7 @@ export default function Footer() {
         </div>
 
         <div className="text-gray-400 dark:text-gray-500 text-xs font-medium">
-          © {new Date().getFullYear()} ApplyWise AI. All rights reserved.
+          © {new Date().getFullYear()} ApplyWise AI. Made by Saumya.
         </div>
       </div>
     </footer>

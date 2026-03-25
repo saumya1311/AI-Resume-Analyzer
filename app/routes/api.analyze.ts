@@ -49,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
         return Response.json({ feedback: JSON.parse(feedbackText) });
     } catch (error: any) {
-        console.error("AI Analysis Error:", error);
-        return Response.json({ error: error.message }, { status: 500 });
+        console.error("AI Analysis Error details:", error, error?.status, error?.message);
+        return Response.json({ error: error?.message || "Internal server error" }, { status: 500 });
     }
 }
